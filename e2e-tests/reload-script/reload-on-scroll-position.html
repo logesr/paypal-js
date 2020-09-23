@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Reload on Scroll Position Demo | PayPal JS</title>
+
+    <style>
+        section {
+            min-height: 500px;
+            border: 1px solid gray;
+            margin: 50px;
+            padding: 20px;
+        }
+    </style>
+  </head>
+  <body>
+    <h1>Reload on Scroll Position Demo</h1>
+
+    <p>Example page that changes the currency based on scroll position using Intersection Observer.</p>
+
+    <script type="module">
+        import { loadScript } from '../../dist/paypal.esm.js';
+        window.paypalLoadScript = function (element, currency) {
+            const options = {
+                'client-id': 'sb',
+                'data-order-id': '12345',
+                currency
+            };
+
+            loadScript(options)
+            .then(paypal => {
+                paypal.Buttons().render(element);
+            });
+        }
+
+        const observer = new IntersectionObserver((entries, observer) => {
+            entries.forEach((entry) => {
+                if (entry.intersectionRatio === 1) {
+                    window.paypalLoadScript(entry.target, entry.target.dataset.currency)
+                }
+            });
+        });
+
+        observer.observe(document.querySelector('#paypal-buttons-usd'));
+        observer.observe(document.querySelector('#paypal-buttons-cad'));
+        observer.observe(document.querySelector('#paypal-buttons-eur'));
+    </script>
+
+    <div id="scroll-area">
+        <!-- USD -->
+        <section>
+            <h3>Shopping Cart Section for USD currency</h3>
+            <div id="paypal-buttons-usd" data-currency="USD"></div>
+        </section>
+
+        <!-- CAD -->
+        <section>
+            <h3>Shopping Cart Section for CAD currency</h3>
+            <div id="paypal-buttons-cad" data-currency="CAD"></div>
+        </section>
+
+        <!-- EUR -->
+        <section>
+            <h3>Shopping Cart Section for EUR currency</h3>
+            <div id="paypal-buttons-eur" data-currency="EUR"></div>
+        </section>
+    </div>
+
+  </body>
+</html>
